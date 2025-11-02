@@ -18,14 +18,15 @@ const SINAIS = [
 ];
 
 const USUARIOS_MOCK = [
-    { id: 1, nome: 'João Silva', email: 'joao@email.com', tipo: 'Intérprete' },
-    { id: 2, nome: 'Maria Santos', email: 'maria@email.com', tipo: 'Intérprete' },
-    { id: 3, nome: 'Pedro Costa', email: 'pedro@email.com', tipo: 'Intérprete' },
-    { id: 4, nome: 'Ana Oliveira', email: 'ana@email.com', tipo: 'Intérprete' },
-    { id: 5, nome: 'Admin Sistema', email: 'admin@sil.com', tipo: 'Administrador' }
+    { id: 1, nome: 'João Silva', email: 'joao@email.com', senha: '123456', tipo: 'Intérprete' },
+    { id: 2, nome: 'Maria Santos', email: 'maria@email.com', senha: '123456', tipo: 'Intérprete' },
+    { id: 3, nome: 'Pedro Costa', email: 'pedro@email.com', senha: '123456', tipo: 'Intérprete' },
+    { id: 4, nome: 'Ana Oliveira', email: 'ana@email.com', senha: '123456', tipo: 'Intérprete' },
+    { id: 5, nome: 'Admin Sistema', email: 'admin@sil.com', senha: '123456', tipo: 'Administrador' },
+    { id: 6, nome: 'Administrador', email: 'adm@adm.com', senha: '123456', tipo: 'Administrador' }, //login extra (ADM), mais facil de lembrar
+    { id: 7, nome: 'Intérprete', email: 'inter@inter.com', senha: '123456', tipo: 'Intérprete' }
 ];
 
-// --Controlador de Temas
 const ThemeManager = {
     currentTheme: 'light',
 
@@ -83,7 +84,7 @@ const ThemeManager = {
 const App = {
     currentUser: null,
     currentPage: 'login',
-    
+
     init() {
         ThemeManager.init();
         const savedUser = localStorage.getItem('currentUser');
@@ -95,10 +96,11 @@ const App = {
         }
     },
 
-    login(email) {
-        this.currentUser = { 
-            email, 
-            tipo: email === 'admin@sil.com' ? 'Administrador' : 'Intérprete' 
+    login(usuario) { 
+        this.currentUser = {
+            email: usuario.email,
+            nome: usuario.nome, 
+            tipo: usuario.tipo  
         };
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         this.navigate('home');
@@ -134,19 +136,19 @@ const App = {
                 ` : ''}
                 <a href="#" onclick="App.logout(); return false;">Sair</a>
             ` : '';
-            
+
             setTimeout(() => ThemeManager.addToggleButton(), 50);
         }
 
         content.innerHTML = this.getPageContent();
-        
+
         if (this.currentPage === 'home') {
             setTimeout(() => carregarTodosSinais(), 100);
         }
     },
 
     getPageContent() {
-        switch(this.currentPage) {
+        switch (this.currentPage) {
             case 'login': return this.renderLogin();
             case 'cadastro': return this.renderCadastro();
             case 'home': return this.renderHome();
@@ -178,7 +180,7 @@ const App = {
                             Não tem conta? <a href="#" onclick="App.navigate('cadastro'); return false;" style="color: var(--cor-primary); font-weight: bold;">Cadastre-se</a>
                         </p>
                         <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
-                            💡 Dica: Use qualquer e-mail para entrar ou <strong>admin@sil.com</strong> para acesso administrativo
+                            💡 Dica: Use qualquer e-mail para entrar ou <strong>adm@adm.com / inter@inter.com </strong> Senha (ambos): <strong>123456</strong> para acesso administrativo
                         </p>
                     </form>
                 </div>
@@ -250,7 +252,7 @@ const App = {
     renderDetalhe() {
         const id = parseInt(sessionStorage.getItem('detalheId'));
         const sinal = SINAIS.find(s => s.id === id);
-        
+
         if (!sinal) {
             return `
                 <div class="container">
@@ -497,7 +499,7 @@ function verificarFavorito(id) {
 function toggleFavorito(id) {
     let favoritos = obterFavoritos();
     const index = favoritos.indexOf(id);
-    
+
     if (index > -1) {
         favoritos.splice(index, 1);
         alert('✓ Removido dos favoritos!');
@@ -505,7 +507,7 @@ function toggleFavorito(id) {
         favoritos.push(id);
         alert('✓ Adicionado aos favoritos!');
     }
-    
+
     salvarFavoritos(favoritos);
     App.render();
 }
@@ -519,11 +521,11 @@ function adicionarHistorico(id) {
     let historico = obterHistorico();
     historico = historico.filter(h => h !== id);
     historico.unshift(id);
-    
+
     if (historico.length > 20) {
         historico = historico.slice(0, 20);
     }
-    
+
     localStorage.setItem('historico', JSON.stringify(historico));
 }
 
@@ -531,90 +533,86 @@ function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const senha = document.getElementById('login-senha').value;
-    
+
     // Validação básica de e-mail
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert('Erro: Por favor, digite um e-mail válido!');
         return;
     }
-    
-    // Validação de senha mínima
+
     if (senha.length < 6) {
         alert('Erro: A senha deve ter no mínimo 6 caracteres!');
         return;
     }
-    
-    // Verificar se o usuário existe (simulação )
-    const usuariosCadastrados = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const usuarioEncontrado = usuariosCadastrados.find(u => u.email === email);
-    
-    // Se não for admin e não estiver cadastrado, bloquear
-    if (email !== 'admin@sil.com' && !usuarioEncontrado) {
+
+    const usuariosDoLocalStorage = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const todosOsUsuariosMap = new Map();
+    USUARIOS_MOCK.forEach(u => todosOsUsuariosMap.set(u.email, u));
+    usuariosDoLocalStorage.forEach(u => todosOsUsuariosMap.set(u.email, u));
+
+    const todosOsUsuarios = Array.from(todosOsUsuariosMap.values());
+    const usuarioEncontrado = todosOsUsuarios.find(u => u.email === email);
+
+    if (!usuarioEncontrado) {
         alert('Erro: Usuário não encontrado! Por favor, cadastre-se primeiro.');
         return;
     }
-    
-    // Se encontrou usuário, validar senha
-    if (usuarioEncontrado && usuarioEncontrado.senha !== senha) {
+
+    if (usuarioEncontrado.senha !== senha) {
         alert('Erro: Senha incorreta!');
         return;
     }
-    
-    App.login(email);
+
+    App.login(usuarioEncontrado); 
 }
 
 function handleCadastro(e) {
     e.preventDefault();
-    
+
     const nome = document.getElementById('cadastro-nome').value.trim();
     const email = document.getElementById('cadastro-email').value.trim();
     const senha = document.getElementById('cadastro-senha').value;
     const confirma = document.getElementById('cadastro-confirma').value;
-    
-    // Validação de nome
+
     if (nome.length < 3) {
         alert('Erro: O nome deve ter no mínimo 3 caracteres!');
         return;
     }
-    
-    // Validação de e-mail
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert('Erro: Por favor, digite um e-mail válido!');
         return;
     }
-    
-    // Validação de senhas
+
     if (senha !== confirma) {
         alert('Erro: As senhas não coincidem!');
         return;
     }
-    
+
     if (senha.length < 6) {
         alert('Erro: A senha deve ter no mínimo 6 caracteres!');
         return;
     }
-    
-    // Verificar se o e-mail já está cadastrado
+
     const usuariosCadastrados = JSON.parse(localStorage.getItem('usuarios') || '[]');
     const emailExiste = usuariosCadastrados.some(u => u.email === email);
-    
+
     if (emailExiste || email === 'admin@sil.com') {
         alert('Erro: Este e-mail já está cadastrado!');
         return;
     }
-    
-    // Salvar novo usuário
+
     usuariosCadastrados.push({
         nome: nome,
         email: email,
         senha: senha,
         tipo: 'Intérprete'
     });
-    
+
     localStorage.setItem('usuarios', JSON.stringify(usuariosCadastrados));
-    
+
     alert('✓ Cadastro realizado com sucesso! Agora você pode fazer login.');
     App.navigate('login');
 }
@@ -622,7 +620,7 @@ function handleCadastro(e) {
 function carregarTodosSinais() {
     const container = document.getElementById('sinais-container');
     if (!container) return;
-    
+
     container.innerHTML = SINAIS.map(s => `
         <div class="sinal-card" onclick="verDetalhe(${s.id})">
             <h3>${s.termo}</h3>
@@ -636,16 +634,16 @@ function filtrarSinais() {
     const input = document.getElementById('search-input');
     const termo = input ? input.value.toLowerCase().trim() : '';
     const container = document.getElementById('sinais-container');
-    
+
     if (!container) return;
-    
+
     if (!termo) {
         carregarTodosSinais();
         return;
     }
-    
-    const sinaisFiltrados = SINAIS.filter(s => 
-        s.termo.toLowerCase().includes(termo) || 
+
+    const sinaisFiltrados = SINAIS.filter(s =>
+        s.termo.toLowerCase().includes(termo) ||
         s.descricao.toLowerCase().includes(termo) ||
         s.categoria.toLowerCase().includes(termo)
     );
