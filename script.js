@@ -1,4 +1,7 @@
-// ===== MOCK DATA =====
+
+
+
+//  MOCKDATA (Banco local)
 const SINAIS = [
     { id: 1, termo: 'Algoritmo', descricao: 'Sequência finita de instruções para resolver um problema', categoria: 'Lógica', videoUrl: 'video-algoritmo.mp4' },
     { id: 2, termo: 'Array', descricao: 'Estrutura de dados que armazena elementos em sequência', categoria: 'Estruturas de Dados', videoUrl: 'video-array.mp4' },
@@ -25,7 +28,7 @@ const USUARIOS_MOCK = [
     { id: 5, nome: 'Admin Sistema', email: 'admin@sil.com', tipo: 'Administrador' }
 ];
 
-// Gerenciador de Temas
+// --Controlador de Temas
 const ThemeManager = {
     currentTheme: 'light',
 
@@ -80,7 +83,6 @@ const ThemeManager = {
     }
 };
 
-// Estado de seguimento
 const App = {
     currentUser: null,
     currentPage: 'login',
@@ -481,7 +483,7 @@ const App = {
     }
 };
 
-// Funções de armazenamento
+// --funções de armazenamento
 function obterFavoritos() {
     const favoritos = localStorage.getItem('favoritos');
     return favoritos ? JSON.parse(favoritos) : [];
@@ -530,22 +532,93 @@ function adicionarHistorico(id) {
 
 function handleLogin(e) {
     e.preventDefault();
-    const email = document.getElementById('login-email').value;
+    const email = document.getElementById('login-email').value.trim();
+    const senha = document.getElementById('login-senha').value;
+    
+    // Validação básica de e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Erro: Por favor, digite um e-mail válido!');
+        return;
+    }
+    
+    // Validação de senha mínima
+    if (senha.length < 6) {
+        alert('Erro: A senha deve ter no mínimo 6 caracteres!');
+        return;
+    }
+    
+    // Verificar se o usuário existe (simulação )
+    const usuariosCadastrados = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const usuarioEncontrado = usuariosCadastrados.find(u => u.email === email);
+    
+    // Se não for admin e não estiver cadastrado, bloquear
+    if (email !== 'admin@sil.com' && !usuarioEncontrado) {
+        alert('Erro: Usuário não encontrado! Por favor, cadastre-se primeiro.');
+        return;
+    }
+    
+    // Se encontrou usuário, validar senha
+    if (usuarioEncontrado && usuarioEncontrado.senha !== senha) {
+        alert('Erro: Senha incorreta!');
+        return;
+    }
+    
     App.login(email);
 }
 
 function handleCadastro(e) {
     e.preventDefault();
     
+    const nome = document.getElementById('cadastro-nome').value.trim();
+    const email = document.getElementById('cadastro-email').value.trim();
     const senha = document.getElementById('cadastro-senha').value;
     const confirma = document.getElementById('cadastro-confirma').value;
     
-    if (senha !== confirma) {
-        alert('❌ As senhas não coincidem!');
+    // Validação de nome
+    if (nome.length < 3) {
+        alert('Erro: O nome deve ter no mínimo 3 caracteres!');
         return;
     }
     
-    alert('✓ Cadastro realizado com sucesso!');
+    // Validação de e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Erro: Por favor, digite um e-mail válido!');
+        return;
+    }
+    
+    // Validação de senhas
+    if (senha !== confirma) {
+        alert('Erro: As senhas não coincidem!');
+        return;
+    }
+    
+    if (senha.length < 6) {
+        alert('Erro: A senha deve ter no mínimo 6 caracteres!');
+        return;
+    }
+    
+    // Verificar se o e-mail já está cadastrado
+    const usuariosCadastrados = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const emailExiste = usuariosCadastrados.some(u => u.email === email);
+    
+    if (emailExiste || email === 'admin@sil.com') {
+        alert('Erro: Este e-mail já está cadastrado!');
+        return;
+    }
+    
+    // Salvar novo usuário
+    usuariosCadastrados.push({
+        nome: nome,
+        email: email,
+        senha: senha,
+        tipo: 'Intérprete'
+    });
+    
+    localStorage.setItem('usuarios', JSON.stringify(usuariosCadastrados));
+    
+    alert('✓ Cadastro realizado com sucesso! Agora você pode fazer login.');
     App.navigate('login');
 }
 
@@ -583,7 +656,7 @@ function filtrarSinais() {
     if (sinaisFiltrados.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <p>❌ Nenhum sinal encontrado para "<strong>${termo}</strong>"</p>
+                <p>Nenhum sinal encontrado para "<strong>${termo}</strong>"</p>
                 <p style="font-size: 0.9rem; color: var(--cor-text-secondary); margin-top: 0.5rem;">
                     Tente buscar por: algoritmo, array, banco de dados, firewall, etc.
                 </p>
@@ -641,7 +714,7 @@ function removerSinal(id) {
     }
 }
 
-// Iniciar
+// --Iniciador
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });

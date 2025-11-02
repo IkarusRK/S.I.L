@@ -34,6 +34,7 @@
     --cor-footer-bg: #0d0d0d;
 }
 
+/* --Transição suave */
 body, header, footer, .container, .sinal-card, input, textarea, select, table, th, td, .btn {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -43,6 +44,8 @@ body {
     background: linear-gradient(135deg, var(--cor-background) 0%, var(--cor-white) 100%);
     min-height: 100vh;
     color: var(--cor-text);
+    display: flex;
+    flex-direction: column;
 }
 
 [data-theme="dark"] body {
@@ -88,7 +91,7 @@ nav a:hover {
     opacity: 0.8;
 }
 
-/* Modo claro/escuro */
+/* --Botão (Alternar temas) */
 .theme-toggle {
     background: var(--cor-card-bg);
     border: 2px solid var(--cor-primary);
@@ -116,8 +119,20 @@ nav a:hover {
 
 main {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 0 auto;
     padding: 0 1rem;
+    flex: 1;
+    width: 100%;
+}
+
+main:has(.auth-container) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main:has(.container:not(.auth-container)) {
+    padding: 2rem 1rem;
 }
 
 .container {
@@ -234,6 +249,7 @@ h1, h2 {
     color: var(--cor-white);
 }
 
+/* --Botões */
 .btn {
     background: var(--cor-primary);
     color: var(--cor-white);
@@ -374,13 +390,14 @@ footer {
     width: 100%;
 }
 
+/* --Classes utilitarias */
 .hidden {
     display: none;
 }
 
 .auth-container {
     max-width: 400px;
-    margin: 3rem auto;
+    width: 100%;
 }
 
 .empty-state {
@@ -400,6 +417,7 @@ footer {
     fill: var(--cor-primary);
 }
 
+/* --links */
 a {
     color: var(--cor-primary);
     text-decoration: none;
