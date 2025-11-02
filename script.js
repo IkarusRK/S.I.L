@@ -1,6 +1,3 @@
-
-
-
 //  MOCKDATA (Banco local)
 const SINAIS = [
     { id: 1, termo: 'Algoritmo', descricao: 'Sequência finita de instruções para resolver um problema', categoria: 'Lógica', videoUrl: 'video-algoritmo.mp4' },
