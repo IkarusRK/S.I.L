@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-/* ===== VARIÁVEIS DE TEMA ===== */
 :root {
     /* Tema Claro (padrão) */
     --cor-primary: #30cb1b;
@@ -35,7 +34,6 @@
     --cor-footer-bg: #0d0d0d;
 }
 
-/* ===== TRANSIÇÕES SUAVES ===== */
 body, header, footer, .container, .sinal-card, input, textarea, select, table, th, td, .btn {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -90,7 +88,7 @@ nav a:hover {
     opacity: 0.8;
 }
 
-/* ===== BOTÃO DE ALTERNÂNCIA DE TEMA ===== */
+/* Modo claro/escuro */
 .theme-toggle {
     background: var(--cor-card-bg);
     border: 2px solid var(--cor-primary);
@@ -134,7 +132,6 @@ h1, h2 {
     margin-bottom: 1.5rem;
 }
 
-/* ===== HOME INTRO ===== */
 .home-intro {
     text-align: center;
     margin-bottom: 2rem;
@@ -150,7 +147,6 @@ h1, h2 {
     font-size: 1.1rem;
 }
 
-/* ===== SEARCH BOX ===== */
 .search-box {
     margin-bottom: 2rem;
 }
@@ -182,7 +178,6 @@ h1, h2 {
     margin-top: 0.5rem;
 }
 
-/* ===== SINAIS GRID ===== */
 .sinais-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -224,7 +219,6 @@ h1, h2 {
     margin-bottom: 0.8rem;
 }
 
-/* ===== CATEGORIA TAG ===== */
 .categoria-tag {
     display: inline-block;
     background: var(--cor-primary-light);
@@ -240,7 +234,6 @@ h1, h2 {
     color: var(--cor-white);
 }
 
-/* ===== BUTTONS ===== */
 .btn {
     background: var(--cor-primary);
     color: var(--cor-white);
@@ -272,7 +265,6 @@ h1, h2 {
     font-size: 0.85rem;
 }
 
-/* ===== FORMS ===== */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -309,7 +301,6 @@ h1, h2 {
     color: var(--cor-text-secondary);
 }
 
-/* ===== VIDEO CONTAINER ===== */
 .video-container {
     background: #000;
     border-radius: 10px;
@@ -327,7 +318,6 @@ h1, h2 {
     border: 1px solid var(--cor-border);
 }
 
-/* ===== DETAIL ACTIONS ===== */
 .detail-actions {
     display: flex;
     gap: 1rem;
@@ -335,7 +325,6 @@ h1, h2 {
     flex-wrap: wrap;
 }
 
-/* ===== TABLES ===== */
 .table-container {
     overflow-x: auto;
 }
@@ -376,16 +365,15 @@ tr:hover {
     gap: 0.5rem;
 }
 
-/* ===== FOOTER ===== */
 footer {
     background: var(--cor-footer-bg);
     color: var(--cor-white);
     text-align: center;
     padding: 1.5rem;
-    margin-top: 3rem;
+    margin-top: auto;
+    width: 100%;
 }
 
-/* ===== UTILITY CLASSES ===== */
 .hidden {
     display: none;
 }
@@ -395,7 +383,6 @@ footer {
     margin: 3rem auto;
 }
 
-/* ===== EMPTY STATE ===== */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
@@ -413,7 +400,6 @@ footer {
     fill: var(--cor-primary);
 }
 
-/* ===== LINKS ===== */
 a {
     color: var(--cor-primary);
     text-decoration: none;
@@ -423,7 +409,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     header {
         padding: 1rem;

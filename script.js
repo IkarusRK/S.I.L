@@ -25,7 +25,7 @@ const USUARIOS_MOCK = [
     { id: 5, nome: 'Admin Sistema', email: 'admin@sil.com', tipo: 'Administrador' }
 ];
 
-// ===== THEME MANAGER =====
+// Gerenciador de Temas
 const ThemeManager = {
     currentTheme: 'light',
 
@@ -80,7 +80,7 @@ const ThemeManager = {
     }
 };
 
-// ===== STATE MANAGEMENT =====
+// Estado de seguimento
 const App = {
     currentUser: null,
     currentPage: 'login',
@@ -481,7 +481,7 @@ const App = {
     }
 };
 
-// ===== STORAGE FUNCTIONS =====
+// Funções de armazenamento
 function obterFavoritos() {
     const favoritos = localStorage.getItem('favoritos');
     return favoritos ? JSON.parse(favoritos) : [];
@@ -528,7 +528,6 @@ function adicionarHistorico(id) {
     localStorage.setItem('historico', JSON.stringify(historico));
 }
 
-// ===== EVENT HANDLERS =====
 function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
@@ -642,7 +641,7 @@ function removerSinal(id) {
     }
 }
 
-// ===== INICIALIZAÇÃO =====
+// Iniciar
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
